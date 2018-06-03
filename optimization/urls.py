@@ -19,5 +19,5 @@ from plastics.views import solve
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("/solve",solve, name='solve')
+    path("solve",solve, name='solve')
 ]

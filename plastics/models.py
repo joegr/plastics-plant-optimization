@@ -19,19 +19,25 @@ class Job(models.Model):
     
 # For Each Optimization Job we choose a number of jobs.
 # and then optimize for it.
+# 1 OptimizationJob has many solution Set
+# 1 SolutionSet has all the jobs that need to be run.
 class SolutionSet(models.Model):
     optimization_job = models.ForeignKey(OptimizationJob, on_delete=models.CASCADE)
-    
-class SolutionComponents(models.Model):
+    makespan = models.IntegerField(blank=True,null=True)
+
+    def __str__(self):
+        return "%s - %s" %(self.optimization_job.title, self.makespan)
+
+class SolutionComponent(models.Model):
     job = models.ForeignKey(Job, on_delete=models.CASCADE)
     machine = models.ForeignKey(Machine, on_delete=models.CASCADE)
     start_date = models.IntegerField()
     end_date = models.IntegerField()
-    solution = models.ForeignKey(SolutionSet, on_delete=models.CASCADE)
+    solutionset = models.ForeignKey(SolutionSet, on_delete=models.CASCADE)
 
 
 admin.site.register(OptimizationJob)
 admin.site.register(Machine)
 admin.site.register(Job)
 admin.site.register(SolutionSet)
-admin.site.register(SolutionComponents)
+admin.site.register(SolutionComponent)
