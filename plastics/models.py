@@ -10,6 +10,8 @@ class OptimizationJob(models.Model):
 class Machine(models.Model):
     name = models.CharField(max_length=100)
     #optimization_job = models.ForeignKey(OptimizationJob)
+    def __str__(self):
+        return self.name
 
 class Job(models.Model):
     arrival_date = models.IntegerField()#earliest start date

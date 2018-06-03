@@ -1,7 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .models import OptimizationJob, Job, Machine, SolutionSet, SolutionComponent
 from ortools.constraint_solver import pywrapcp
+from .forms import OptimizationJobForm, JobForm
 
 def home(request):
     """List all your existing Optimization Jobs.
@@ -17,34 +18,71 @@ def optimization_job(request, pk):
     """Details of Optimization  Job
     Fully Solved?
     All solutions sorted by makespan?"""
-    context = {}
     optimization_job = OptimizationJob.objects.get(pk=pk)
+    
+    context = {}
+    if request.method == "POST":
+        form = JobForm(request.POST)
+        if form.is_valid():
+            instance = form.save(commit=False)
+            instance.optimization_job = optimization_job
+            instance.save()
+            redirect("optimization_job_details", pk=pk )
+    else:
+        form = JobForm()
+    
     jobs = Job.objects.filter(optimization_job = optimization_job)
     solutionsets = SolutionSet.objects.filter(optimization_job=optimization_job)
 
+    context["optimization_job"] = optimization_job
     context["solutionsets"] = solutionsets
     context["jobs"] = jobs
     context["machines"] = Machine.objects.all()
+    context["form"] = form
     # Do we need to convert this into////NAHHH...
 
-
     return render(request, "plastics/optimization_details.html",context)
+
+def create_new_optimization_job(request):
+    """
+    1. Create Tasks that need to be performed, and add what machines they can run at. 
+    2. Machines are created seperately. Machines are available here to choose from.
+    """
+    if request.method == "POST":
+        print("Got here")
+        form = OptimizationJobForm(request.POST)
+        if form.is_valid():
+            instance = form.save()
+            #If saved, lets take to edit optimization job page.
+            return redirect("") #Redirect to Edit Optimization Job.
+    else:
+        form = OptimizationJobForm()
+
+    context = {}
+    context["form"] = form 
+    return render(request, "plastics/new_optimization_job.html",context)
+
 
 
 
 # Create your views here.
-def solve(request):
-    optimization_job = OptimizationJob.objects.get(pk = 1)
+def solve(request, pk):
+    print("Got to solve.")
+    optimization_job = OptimizationJob.objects.get(pk = pk)
+    print(optimization_job)
     #create a new solution set each time.
     #Get a List of Jobs.
     jobs = Job.objects.filter(optimization_job=optimization_job)
-
+    print("jobs are:")
+    print(jobs)
     #Get a List of Machines
     machines = []
     for j in jobs:
+        print(j.machines.all())
         for m in j.machines.all():
             if m not in machines:
                 machines.append(m) #Machines will be in 
+    print(machines)
     solver = pywrapcp.Solver("jobscheduler")
     shift_grid = dict()
     #horizon is the sum of all job lengths.
@@ -91,8 +129,10 @@ def solve(request):
     ### Solver Example when using NextSolution()
     solver.NewSearch(db,)
     num_solution = 0
-    
+    print("starting to search")
+    print(shift_grid)
     while solver.NextSolution():
+        print("solution")
         solutionset = SolutionSet.objects.create(optimization_job=optimization_job)
         num_solution += 1
         #if num_solution > 2:
@@ -120,30 +160,32 @@ def solve(request):
         #Could also produce makespan by doing some sql post processing.
         #sol_comps = SolutionComponents.objects.filter(solutionset = SolutionSet )
 
-        machines = {}
-        for i in [1,2]:
-            machines[i] = [0,]
-            #machine_spans = []
-            for j in range(len(jobs)):       
-                shift_var = shift_grid[(j+1,i)]
-                if shift_var.MustBePerformed():
-                    print(shift_var)
-                    start = shift_var.StartMin()
-                    end = start + jobs[j].duration
-                    length = jobs[j].duration
-                    #print("End time ", end)
-                    machines[i].append(end)
-                    #print(machines[i])
+        # machines = {}
+        # for i in [m.id for m in machines]:
+        #     machines[i] = [0,]
+        #     machine = machines[i]
+        #     #machine_spans = []
+        #     for j in range(len(jobs)):
+        #         job = jobs[j]       
+        #         shift_var = shift_grid[(job.id,machine.id)]
+        #         if shift_var.MustBePerformed():
+        #             print(shift_var)
+        #             start = shift_var.StartMin()
+        #             end = start + job.duration
+        #             length = jobs.duration
+        #             #print("End time ", end)
+        #             machines[i].append(end)
+        #             #print(machines[i])
                     
-                    #lll= shift_var.StartMin()                
-                    #print(lll)
+        #             #lll= shift_var.StartMin()                
+        #             #print(lll)
 
-        print("Machines : " , machines )
-        max_of_1 = max(machines[1])
-        max_of_2 = max(machines[2])
-        makespan = max([max(machines[i]) for i in [1,2] ]  )
-        print("makeSpan : ", makespan)
-
+        # print("Machines : " , machines )
+        # max_of_1 = max(machines[1])
+        # max_of_2 = max(machines[2])
+        # makespan = max([max(machines[i]) for i in [m.id for m in machines]  ]  )
+        # print("makeSpan : ", makespan)
+    #return redirect("optimization_job_details" , pk=pk)
     return HttpResponse("Done")
 
 

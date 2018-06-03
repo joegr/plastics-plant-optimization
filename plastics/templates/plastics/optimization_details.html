@@ -2,6 +2,7 @@
 {% block content %}
 <div class="container">
     <h2>Detail of Optimization Job </h2>
+    <a class="btn btn-primary" href="/solve/{{optimization_job.id}}/">Run Optimization</a>
     <p> Here are the Jobs </p>
     <table class="table">
         <thead>
@@ -19,8 +20,17 @@
                 <td>{{job.duration}}</td>
             </tr>
             {% endfor %}
+
         </tbody>
     </table>
+    <h3>Add a Task</h3>
+
+    <form method="POST" action="">
+        {% csrf_token %}
+        {% load bootstrap %}
+        {{form|bootstrap}}
+        <input type="submit" value="Submit" /> 
+    </form>
 
 
     <p>Choose a solution set from all the solutions generated.</p>

@@ -1,0 +1,13 @@
+{% extends "plastics/base.html" %}
+{% block content %}
+<div class="container">
+    <h3>Create New Optimization  Job</h3>
+    {% load bootstrap %}
+    <form  action="" method="post">
+        {% csrf_token %}
+        {{form|bootstrap }}
+        <input type="submit" value="Submit" />
+    </form>
+</div>
+
+{% endblock %}
