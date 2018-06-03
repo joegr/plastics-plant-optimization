@@ -1,0 +1,28 @@
+{% extends "plastics/base.html" %}
+
+{% block content %}
+
+<div class="container">
+    <h2>Optimization Jobs</h2>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Job Name</th>
+                <th>Found All Feasible? </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for job in optimization_jobs %}
+                <tr>
+                    <td><a href="{% url 'optimization_job_details' pk=job.id %}">{{job.title}}</a></td>
+                    <td>{{job.found_all_feasible}}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <button>Create new Optimization Job</button>
+</div>
+
+{% endblock %}

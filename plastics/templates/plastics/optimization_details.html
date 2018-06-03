@@ -1,0 +1,45 @@
+{% extends "plastics/base.html" %}
+{% block content %}
+<div class="container">
+    <h2>Detail of Optimization Job </h2>
+    <p> Here are the Jobs </p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Task ID</th>
+                <th>Machines allowed</th>
+                <th>Duration</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for job in jobs %}
+            <tr>
+                <td>{{job.id}}</td>
+                <td> </td>
+                <td>{{job.duration}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+    <p>Choose a solution set from all the solutions generated.</p>
+    
+    {% for sset in solutionsets %}
+        <h3>Solution Set {{sset.id}}</h3>
+        <p>Make Span : {{sset.makespan}}</p>
+        {% for machine in machines %}
+            <p>Machine {{machine.id}}  
+                {% for component in sset.solutioncomponent_set.all %}
+                    {% if machine.id == component.machine.id %}
+                    -- {{component.job.id}} (Time: {{component.start_date}} to {{component.end_date}} ) 
+                    {% endif %}
+                {% endfor %}
+            </p>
+        {% endfor %}
+    {% endfor %}
+
+</div>
+
+
+{% endblock content %}

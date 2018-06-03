@@ -28,6 +28,9 @@ class SolutionSet(models.Model):
     def __str__(self):
         return "%s - %s" %(self.optimization_job.title, self.makespan)
 
+    class Meta:
+        ordering=["makespan"]
+
 class SolutionComponent(models.Model):
     job = models.ForeignKey(Job, on_delete=models.CASCADE)
     machine = models.ForeignKey(Machine, on_delete=models.CASCADE)
@@ -35,6 +38,8 @@ class SolutionComponent(models.Model):
     end_date = models.IntegerField()
     solutionset = models.ForeignKey(SolutionSet, on_delete=models.CASCADE)
 
+    class Meta:
+        ordering=["start_date"]
 
 admin.site.register(OptimizationJob)
 admin.site.register(Machine)

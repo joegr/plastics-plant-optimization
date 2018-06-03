@@ -15,9 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from plastics.views import solve
+from plastics import views 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("solve",solve, name='solve')
+    path("solve",views.solve, name='solve'),
+    path("",views.home, name='home'),
+    path("job/<int:pk>/",views.optimization_job, name='optimization_job_details'),
 ]

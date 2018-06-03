@@ -3,6 +3,35 @@ from django.http import HttpResponse
 from .models import OptimizationJob, Job, Machine, SolutionSet, SolutionComponent
 from ortools.constraint_solver import pywrapcp
 
+def home(request):
+    """List all your existing Optimization Jobs.
+    Button to create new Optimization Job
+    """
+    context = {}
+    optimization_jobs = OptimizationJob.objects.all()
+    context["optimization_jobs"] = optimization_jobs
+    return render(request, "plastics/home.html",context)
+    
+
+def optimization_job(request, pk):
+    """Details of Optimization  Job
+    Fully Solved?
+    All solutions sorted by makespan?"""
+    context = {}
+    optimization_job = OptimizationJob.objects.get(pk=pk)
+    jobs = Job.objects.filter(optimization_job = optimization_job)
+    solutionsets = SolutionSet.objects.filter(optimization_job=optimization_job)
+
+    context["solutionsets"] = solutionsets
+    context["jobs"] = jobs
+    context["machines"] = Machine.objects.all()
+    # Do we need to convert this into////NAHHH...
+
+
+    return render(request, "plastics/optimization_details.html",context)
+
+
+
 # Create your views here.
 def solve(request):
     optimization_job = OptimizationJob.objects.get(pk = 1)
