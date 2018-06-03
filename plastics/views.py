@@ -140,7 +140,7 @@ def solve(request, pk):
     print("starting to search")
     print(shift_grid)
     while solver.NextSolution():
-        print("solution")
+        print("solution : " , num_solution)
         solutionset = SolutionSet.objects.create(optimization_job=optimization_job)
         num_solution += 1
         #if num_solution > 2:
