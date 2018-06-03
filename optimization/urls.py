@@ -15,7 +15,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from plastics.views import solve
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path("/solve",solve, name='solve')
 ]
