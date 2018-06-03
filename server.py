@@ -1,7 +1,7 @@
 import os
 from waitress import serve 
 from whitenoise import WhiteNoise 
-from demo3d_django_project.wsgi import application
+from optimization.wsgi import application
 
 if __name__ == '__main__':
     static_root = os.path.join(os.path.realpath(__file__),'static')
