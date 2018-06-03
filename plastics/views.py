@@ -33,7 +33,7 @@ def optimization_job(request, pk):
         form = JobForm()
     
     jobs = Job.objects.filter(optimization_job = optimization_job)
-    solutionsets = SolutionSet.objects.filter(optimization_job=optimization_job)
+    solutionsets = SolutionSet.objects.filter(optimization_job=optimization_job)[:100]#First 100 results only.
 
     context["optimization_job"] = optimization_job
     context["solutionsets"] = solutionsets
