@@ -2,12 +2,15 @@
 {% block content %}
 <div class="container">
     <h2>Detail of Optimization Job </h2>
+    <p>Running a new optimization will not delete old optimization results</p>
     <a class="btn btn-primary" href="/solve/{{optimization_job.id}}/">Run Optimization</a>
-    <p> Here are the Jobs </p>
+    <a class="btn btn-warning" href="{% url 'clear_all_solution_sets' pk=optimization_job.id %}" >Clear Solutions </a>
+    <p> Here are the Tasks added so far. </p>
     <table class="table">
         <thead>
             <tr>
                 <th>Task ID</th>
+                <th>Earliest Start Date</th>
                 <th>Machines allowed</th>
                 <th>Duration</th>
             </tr>
@@ -16,7 +19,8 @@
             {% for job in jobs %}
             <tr>
                 <td>{{job.id}}</td>
-                <td> </td>
+                <td>{{job.arrival_date}}</td>
+                <td>{{job.get_machines_str}}</td>
                 <td>{{job.duration}}</td>
             </tr>
             {% endfor %}

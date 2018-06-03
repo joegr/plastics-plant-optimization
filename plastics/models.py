@@ -18,7 +18,11 @@ class Job(models.Model):
     machines = models.ManyToManyField(Machine)#compatible machines
     duration = models.IntegerField()
     optimization_job = models.ForeignKey(OptimizationJob, on_delete=models.CASCADE)
-    
+    def get_machines_str(self):
+        s = ""
+        for m in self.machines.all():
+            s += "| " +  m.name + " |"
+        return s
 # For Each Optimization Job we choose a number of jobs.
 # and then optimize for it.
 # 1 OptimizationJob has many solution Set

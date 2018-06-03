@@ -27,6 +27,7 @@ def optimization_job(request, pk):
             instance = form.save(commit=False)
             instance.optimization_job = optimization_job
             instance.save()
+            form.save_m2m()
             redirect("optimization_job_details", pk=pk )
     else:
         form = JobForm()
@@ -36,12 +37,19 @@ def optimization_job(request, pk):
 
     context["optimization_job"] = optimization_job
     context["solutionsets"] = solutionsets
-    context["jobs"] = jobs
+    context["jobs"] = jobs #Tasks
     context["machines"] = Machine.objects.all()
     context["form"] = form
     # Do we need to convert this into////NAHHH...
 
     return render(request, "plastics/optimization_details.html",context)
+
+def clear_all_solution_sets(request, pk):
+    optimization_job = OptimizationJob.objects.get(pk=pk)
+    solution_sets = SolutionSet.objects.filter(optimization_job=optimization_job)
+    for s in solution_sets:
+        s.delete()
+    return redirect("optimization_job_details", pk=pk) #Redirect to Edit Optimization Job.
 
 def create_new_optimization_job(request):
     """
@@ -54,7 +62,7 @@ def create_new_optimization_job(request):
         if form.is_valid():
             instance = form.save()
             #If saved, lets take to edit optimization job page.
-            return redirect("") #Redirect to Edit Optimization Job.
+            return redirect("optimization_job_details", pk=instance.id) #Redirect to Edit Optimization Job.
     else:
         form = OptimizationJobForm()
 
@@ -185,8 +193,8 @@ def solve(request, pk):
         # max_of_2 = max(machines[2])
         # makespan = max([max(machines[i]) for i in [m.id for m in machines]  ]  )
         # print("makeSpan : ", makespan)
-    #return redirect("optimization_job_details" , pk=pk)
-    return HttpResponse("Done")
+    return redirect("optimization_job_details" , pk=pk)
+    #return HttpResponse("Done")
 
 
     

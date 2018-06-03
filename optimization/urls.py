@@ -23,6 +23,7 @@ urlpatterns = [
     path("",views.home, name='home'),
     path("create_job/", views.create_new_optimization_job, name="create_new_optimization_job"),
     path("job/<int:pk>/",views.optimization_job, name='optimization_job_details'),
-    path("job/<int:pk>/create",views.optimization_job, name='create_optimization_job'),
+    path("job/<int:pk>/create/",views.optimization_job, name='create_optimization_job'),
+    path("job/<int:pk>/clear_all_solution_sets/",views.clear_all_solution_sets, name='clear_all_solution_sets'),
 
 ]
